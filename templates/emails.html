@@ -17,6 +17,9 @@
             text-align: right;
             color: #888;
         }
+        .classification {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -25,12 +28,14 @@
         <a href="/" class="btn btn-secondary mb-3">Go Back</a>
         <div class="list-group">
             {% for email in emails %}
-                <a href="{{ url_for('email_detail', email_id=email.id, username=username, app_password=app_password, imap_server=imap_server) }}" class="list-group-item list-group-item-action email-item">
+                <a href="/email/{{ email.id }}?username={{ username }}&app_password={{ app_password }}&imap_server={{ imap_server }}" class="list-group-item list-group-item-action email-item">
                     <div class="row">
                         <div class="col-md-8">
                             <h5 class="mb-1">{{ email.subject }}</h5>
                             <p class="mb-1"><strong>From:</strong> {{ email.from }}</p>
                             <p class="mb-1"><strong>Snippet:</strong> {{ email.snippet }}</p>
+                            <button class="btn btn-info mt-2" onclick="event.preventDefault(); toggleClassification({{ loop.index0 }});">Show Classification</button>
+                            <p id="classification-{{ loop.index0 }}" class="classification mt-2"><strong>Phishing Probability:</strong> {{ email.phishing_probability }}%</p>
                         </div>
                         <div class="col-md-4 email-date">
                             <p class="mb-1">{{ email.date }}</p>
@@ -40,5 +45,15 @@
             {% endfor %}
         </div>
     </div>
+    <script>
+        function toggleClassification(index) {
+            var element = document.getElementById('classification-' + index);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>

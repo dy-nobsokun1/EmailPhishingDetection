@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Phishing Detector</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Body styling */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #343a40;
+        }
+
+        /* Container styling */
+        .container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        /* Form input styling */
+        .form-control {
+            border-radius: 0.25rem;
+        }
+
+        /* Radio button styling */
+        .email-container {
+            border: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+
+        /* Label styling */
+        .email-container label {
+            border: 2px solid transparent;
+            border-radius: 5px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .email-container input:checked ~ label {
+            border: 2px solid #0d6efd;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.1);
+        }
+
+        .outlook {
+            opacity: 25%;
+        }
+
+        .outlook:hover {
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            background-color: #0b5ed7;
+            transform: translateY(1px);
+        }
+
+        h1 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #212529;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex align-items-center justify-content-center min-vh-100 overflow-hidden">
+        <div class="container h-75 m-0 bg-light p-4 border border-1 border-opacity-50 rounded fade-in" style="width: 40%; min-width: 400px; max-width: 500px;">
+            <h1 class="text-center">Email Phishing Detector</h1>
+            <div class="d-flex-column align-items-center justify-content-center p-3">
+                <form action="/fetch-emails" method="post">
+                    <div class="mb-4">
+                        <div class="d-flex form-group align-items-center mb-3">
+                            <label for="username" class="w-50">Email Address</label>
+                            <input type="email" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="d-flex form-group align-items-center mb-3">
+                            <label for="app_password" class="w-50">App Password</label>
+                            <input type="password" class="form-control" id="app_password" name="app_password" required>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="imap_server">Email Service</label>
+                        <ul class="d-flex justify-content-around p-0 m-0 list-unstyled">
+                            <!-- gmail -->
+                            <li class="list-group-item p-1 email-container" style="width: 20%;">
+                                <input type="radio" class="d-none" id="gmail" name="imap_server" value="imap.gmail.com" required>
+                                <label for="gmail" class="d-flex justify-content-center m-0 btn btn-light">
+                                    <img src="https://thumbs.dreamstime.com/b/%D0%BF%D0%B5%D1%87%D0%B0%D1%82%D1%8C-201003176.jpg" style="width: 80%;" alt="Gmail Icon" />
+                                </label>
+                            </li>
+                            <!-- outlook -->
+                            <li class="list-group-item p-1 email-container" style="width: 20%;">
+                                <input type="radio" class="d-none outlook" id="outlook" name="imap_server" value="" required disabled>
+                                <label for="outlook" class="d-flex justify-content-center m-0 outlook">
+                                    <img src="https://m.media-amazon.com/images/I/51tOZiEHNLL.png" style="width: 80%;" alt="Outlook Icon" />
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
