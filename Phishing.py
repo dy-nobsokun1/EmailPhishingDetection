@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, jsonify
 from markupsafe import Markup
 import imaplib
 import email
@@ -8,19 +8,20 @@ import logging
 import joblib
 import shap
 import pandas as pd
+import re
+import requests
+import socket
+
 
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Load the trained machine learning model
 model = joblib.load('model/email_classifier.pkl')
 
-# Create a sample data frame for SHAP KernelExplainer
-# This should be a small representative sample of the training data
 df_sample = pd.DataFrame({
-    'text': ["sample email text here"],  # Replace with actual sample text
-    'label': [0]  # Replace with actual sample label
+    'text': ["sample email text here"],  
+    'label': [0]  
 })
 
 # Vectorize the sample text
@@ -46,7 +47,86 @@ def decode_body(body):
         return body.decode(encoding)
 
 
-def fetch_emails(username, app_password, imap_server, mailbox='INBOX', num_emails=10):
+def extract_ip_address(email_message):
+    """
+    Extract the IP address from the email's 'Received' headers.
+    """
+    ip_pattern = re.compile(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
+    received_headers = email_message.get_all('Received')
+    if received_headers:
+        for header in received_headers:
+            ips = ip_pattern.findall(header)
+            if ips:
+                return ips[0]  # Return the first found IP address
+    return "No IP found"
+
+
+def reverse_ip(ip):
+    """Reverse the IP address to prepare it for a DNSBL query."""
+    return '.'.join(reversed(ip.split('.')))
+
+
+def check_ip_blacklist(ip):
+    """Check if an IP address is blacklisted using common DNSBLs."""
+    dnsbls = [
+        'zen.spamhaus.org',
+        'bl.spamcop.net',
+        'b.barracudacentral.org',
+        'dnsbl.sorbs.net'
+    ]
+    
+    reversed_ip = reverse_ip(ip)
+    blacklisted_in = []
+
+    for dnsbl in dnsbls:
+        query = f"{reversed_ip}.{dnsbl}"
+        try:
+            # Perform DNS query
+            socket.gethostbyname(query)
+            blacklisted_in.append(dnsbl)
+        except socket.gaierror:
+            # If the DNS query fails, the IP is not listed in this DNSBL
+            continue
+    
+    if blacklisted_in:
+        return True, blacklisted_in
+    else:
+        return False, []
+
+def get_isp_from_iplocation(ip):
+    """Get the ISP information of an IP address using iplocation.net."""
+    iplocation_url = f'https://api.iplocation.net/?ip={ip}'
+    
+    try:
+        response = requests.get(iplocation_url)
+        data = response.json()
+        # Extract only the ISP information
+        return {'isp': data.get('isp')}
+    except Exception as e:
+        logging.error(f"Error retrieving ISP from iplocation.net for IP {ip}: {e}")
+        return {}
+
+def get_ip_location(ip):
+    """Get the geolocation of an IP address using the original API."""
+    API_KEY = 'b1edeb7035a0e8185837847e89e2c1d6'
+    original_api_url = f'http://api.ipapi.com/{ip}?access_key={API_KEY}'
+    
+    try:
+        response = requests.get(original_api_url)
+        original_data = response.json()
+    except Exception as e:
+        logging.error(f"Error retrieving location from original API for IP {ip}: {e}")
+        original_data = {}
+
+    # Fetch ISP information from iplocation.net
+    isp_data = get_isp_from_iplocation(ip)
+    threat_data = check_ip_threat_level(ip)
+
+    # Combine the two sets of data
+    combined_data = {**original_data, **isp_data, **threat_data}
+    return combined_data
+
+def fetch_emails(username, app_password, imap_server, mailbox='INBOX', start=0, num_emails=10):
     emails = []
     try:
         mail = imaplib.IMAP4_SSL(imap_server)
@@ -57,7 +137,8 @@ def fetch_emails(username, app_password, imap_server, mailbox='INBOX', num_email
 
         logging.debug(f"Found {len(email_ids)} emails")
 
-        latest_email_ids = email_ids[-num_emails:]
+        # Fetch a subset of emails
+        latest_email_ids = email_ids[-(start + num_emails): -start] if start > 0 else email_ids[-num_emails:]
 
         for email_id in reversed(latest_email_ids):
             status, msg_data = mail.fetch(email_id, '(RFC822)')
@@ -89,8 +170,11 @@ def fetch_emails(username, app_password, imap_server, mailbox='INBOX', num_email
                         if body:
                             email_content["body"] = decode_body(body)
 
-                    email_content['phishing_probability'] = classify_email(email_content['body'])
+                    # Get the phishing probability and classification
+                    phishing_proba, classification = classify_email(email_content['body'])
 
+                    email_content['phishing_probability'] = phishing_proba
+                    email_content['classification'] = classification
                     email_content["snippet"] = email_content["body"][:100] + '...' if len(email_content["body"]) > 100 else email_content["body"]
                     emails.append(email_content)
         mail.close()
@@ -105,9 +189,55 @@ def fetch_emails(username, app_password, imap_server, mailbox='INBOX', num_email
 
 def classify_email(text):
     proba = model.predict_proba([text])[0]
-    phishing_proba = proba[1] * 100  # Assuming '1' is the label for phishing
-    return phishing_proba
+    phishing_proba = round(proba[1] * 100)  
 
+
+    if phishing_proba <= 40:
+        classification = "safe"
+    elif 40 < phishing_proba <= 70:
+        classification = "suspicious"
+    else:
+        classification = "phishing"
+
+    return phishing_proba, classification
+
+def check_ip_threat_level(ip):
+    """Check the security threat level of an IP address using AbuseIPDB."""
+    api_key = '1263e176dc70de7b1da2f096f071c1529fdb250915e18a607eb641a856713f041bb5aeb3c71ab071'  # Your provided API key
+    url = f'https://api.abuseipdb.com/api/v2/check'
+    
+    headers = {
+        'Accept': 'application/json',
+        'Key': api_key,
+    }
+
+    params = {
+        'ipAddress': ip,
+        'maxAgeInDays': 90  # Check reports within the last 90 days
+    }
+
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        data = response.json()
+        if response.status_code == 200:
+            threat_score = data.get('data', {}).get('abuseConfidenceScore')
+            return {
+                'threat_level': threat_score,
+                'reports': data.get('data', {}).get('totalReports'),
+                'categories': data.get('data', {}).get('categories')
+            }
+        else:
+            logging.error(f"Error checking threat level for IP {ip}: {data}")
+            return {}
+    except Exception as e:
+        logging.error(f"Error retrieving threat level from AbuseIPDB for IP {ip}: {e}")
+        return {}
+
+@app.route('/api/ip-threat/<ip_address>')
+def api_ip_threat(ip_address):
+    # Check the security threat level of the IP address
+    threat_info = check_ip_threat_level(ip_address)
+    return jsonify(threat_info)
 
 def highlight_phishing_areas(text):
     # Vectorize the text
@@ -144,11 +274,21 @@ def fetch_email_by_id(username, app_password, imap_server, email_id, mailbox='IN
                 subject = decode_subject(msg['Subject'])
                 from_ = decode_subject(msg.get('From'))
                 date = msg['Date']
+
+                # Extract the IP address
+                ip_address = extract_ip_address(msg)
+                
+                # Check if the IP address is blacklisted
+                is_blacklisted, blacklisted_in = check_ip_blacklist(ip_address)
+
                 email_content = {
                     "subject": subject,
                     "from": from_,
                     "body": "",
-                    "date": date
+                    "date": date,
+                    "ip_address": ip_address,
+                    "is_blacklisted": is_blacklisted,
+                    "blacklisted_in": blacklisted_in  # List of DNSBLs where the IP is blacklisted
                 }
                 if msg.is_multipart():
                     for part in msg.walk():
@@ -164,7 +304,10 @@ def fetch_email_by_id(username, app_password, imap_server, email_id, mailbox='IN
                     body = msg.get_payload(decode=True)
                     if body:
                         email_content["body"] = decode_body(body)
-                email_content['phishing_probability'] = classify_email(email_content['body'])
+                
+                # Get phishing probability and highlight areas
+                phishing_proba, classification = classify_email(email_content['body'])
+                email_content['phishing_probability'] = phishing_proba
                 email_content['body'] = Markup(highlight_phishing_areas(email_content['body']))
         mail.close()
         mail.logout()
@@ -186,14 +329,14 @@ def fetch_emails_route():
     username = request.form.get('username')
     app_password = request.form.get('app_password')
     imap_server = request.form.get('imap_server')
+    start = int(request.form.get('start', 0))  # Get the 'start' parameter
 
-    logging.debug(f"Fetching emails for user: {username} with server: {imap_server}")
+    logging.debug(f"Fetching emails for user: {username} with server: {imap_server} starting from {start}")
 
-    emails = fetch_emails(username, app_password, imap_server)
+    emails = fetch_emails(username, app_password, imap_server, start=start)
     logging.debug(f"Fetched {len(emails)} emails")
-    for email in emails:
-        print(email)
-    return render_template('emails.html', emails=emails, username=username, app_password=app_password, imap_server=imap_server)
+    return render_template('emails.html', emails=emails, username=username, app_password=app_password, imap_server=imap_server, start=start)
+
 
 
 @app.route('/email/<email_id>')
@@ -210,15 +353,22 @@ def email_detail(email_id):
     return render_template('email_detail.html', email=email_content)
 
 
+@app.route('/api/ip-details/<ip_address>')
+def api_ip_details(ip_address):
+    # Fetch the detailed information for the IP address using both APIs
+    ip_info = get_ip_location(ip_address)
+    
+    return jsonify(ip_info)
+
+
+
 @app.route('/login')
 def login():
     return render_template('login.html')
 
-
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
-
 
 @app.route('/about')
 def about():

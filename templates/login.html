@@ -46,14 +46,6 @@
             box-shadow: 0 4px 8px rgba(13, 110, 253, 0.1);
         }
 
-        .outlook {
-            opacity: 25%;
-        }
-
-        .outlook:hover {
-            cursor: not-allowed;
-        }
-
         .btn-primary {
             background-color: #0d6efd;
             border-color: #0d6efd;
@@ -111,17 +103,17 @@
                     <div class="form-group mb-4">
                         <label for="imap_server">Email Service</label>
                         <ul class="d-flex justify-content-around p-0 m-0 list-unstyled">
-                            <!-- gmail -->
+                            <!-- Gmail -->
                             <li class="list-group-item p-1 email-container" style="width: 20%;">
                                 <input type="radio" class="d-none" id="gmail" name="imap_server" value="imap.gmail.com" required>
                                 <label for="gmail" class="d-flex justify-content-center m-0 btn btn-light">
                                     <img src="https://thumbs.dreamstime.com/b/%D0%BF%D0%B5%D1%87%D0%B0%D1%82%D1%8C-201003176.jpg" style="width: 80%;" alt="Gmail Icon" />
                                 </label>
                             </li>
-                            <!-- outlook -->
+                            <!-- Outlook -->
                             <li class="list-group-item p-1 email-container" style="width: 20%;">
-                                <input type="radio" class="d-none outlook" id="outlook" name="imap_server" value="" required disabled>
-                                <label for="outlook" class="d-flex justify-content-center m-0 outlook">
+                                <input type="radio" class="d-none" id="outlook" name="imap_server" value="outlook.office365.com" required>
+                                <label for="outlook" class="d-flex justify-content-center m-0 btn btn-light">
                                     <img src="https://m.media-amazon.com/images/I/51tOZiEHNLL.png" style="width: 80%;" alt="Outlook Icon" />
                                 </label>
                             </li>

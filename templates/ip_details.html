@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Details for IP: {{ ip_address }}</h2>
+        <table class="table table-bordered">
+            <tr><th>IP Address</th><td>{{ ip_info.ip }}</td></tr>
+            <tr><th>Type</th><td>{{ ip_info.type }}</td></tr>
+            <tr><th>Continent Name</th><td>{{ ip_info.continent_name }}</td></tr>
+            <tr><th>Country</th><td>{{ ip_info.country_name }}</td></tr>
+            <tr><th>Region</th><td>{{ ip_info.region_name }}</td></tr>
+            <tr><th>City</th><td>{{ ip_info.city }}</td></tr>
+            <tr><th>ZIP Code</th><td>{{ ip_info.zip }}</td></tr>
+            <tr><th>Latitude</th><td>{{ ip_info.latitude }}</td></tr>
+            <tr><th>Longitude</th><td>{{ ip_info.longitude }}</td></tr>
+            <tr><th>ISP</th><td>{{ ip_info.connection.isp }}</td></tr>
+            <tr><th>Organization</th><td>{{ ip_info.connection.organization_type }}</td></tr>
+            <tr><th>Security - Threat Level</th><td>{{ ip_info.security.threat_level }}</td></tr>
+            <tr><th>Time Zone</th><td>{{ ip_info.time_zone.id }} ({{ ip_info.time_zone.current_time }})</td></tr>
+            <tr><th>Currency</th><td>{{ ip_info.currency.name }} ({{ ip_info.currency.code }})</td></tr>
+        </table>
+        <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+    </div>
+</body>
+
+</html>
