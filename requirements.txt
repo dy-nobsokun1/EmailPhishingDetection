@@ -1,44 +1,10 @@
-# Flask is the micro web framework we are using
 Flask==2.3.2
-
-# For loading environment variables
-python-dotenv==1.0.0
-
-# For character encoding detection
-chardet==5.1.0
-
-# For loading serialized machine learning models
-joblib==1.3.1
-
-# For data manipulation
-pandas==2.0.3
-
-# For email handling (not a package but part of standard library)
-# Email functionality: imaplib and email are built-in Python modules
-
-# For HTML/XML templating (part of Flask)
 MarkupSafe==2.1.3
-
-# For serving static files and handling file uploads (part of Flask)
-Werkzeug==2.3.6
-
-# For logging and debug purposes
-logging==0.5.1.2
-
-# Optional: If using machine learning models
+imaplib2==2.58  # imaplib is part of the Python standard library; imaplib2 is used for additional functionality
+chardet==5.2.0
+joblib==1.3.1
+shap==0.41.0
+pandas==2.0.3
 scikit-learn==1.3.0
-
-# Optional: If using any NLTK for NLP tasks
-# nltk==3.8.1
-
-# Optional: If you want to perform statistical data visualizations
-# matplotlib==3.7.2
-
-# Optional: If your application uses any image processing
-# pillow==9.3.0
-
-# Optional: If you need HTTP requests capabilities
-# requests==2.31.0
-
-# Optional: For additional security
-# Flask-Talisman==1.0.0
+requests==2.31.0
+email-validator==1.3.1  # Optional, if email validation is needed
