@@ -1,93 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phishing Email Detection System</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Global styles */
+        /* Typography and Colors */
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #343a40;
-            padding-top: 56px; /* Add padding to prevent overlap with the fixed navbar */
+            background-color: #1f1f1f;
+            font-family: 'Inter', sans-serif;
+            color: #d4d4d4;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
         }
 
+        /* Navbar Styles */
         .navbar {
-            background-color: #343a40;
+            background-color: #2c2c2c;
+            padding: 15px 0;
         }
 
         .navbar-brand, .nav-link {
             color: #ffffff !important;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
+        .nav-link:hover {
+            color: #007bff !important;
+        }
+
+        /* Hero Section */
         .hero-section {
-            background-color: #0d6efd;
+            background-image: url('https://source.unsplash.com/1600x900/?cybersecurity,technology');
+            background-size: cover;
+            background-position: center;
             color: #ffffff;
-            padding: 60px 0;
+            padding: 120px 0;
+            text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.8);
         }
 
         .hero-section h1 {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: 700;
         }
 
         .hero-section p {
             font-size: 1.25rem;
+            margin-top: 20px;
         }
 
+        .btn-primary {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            margin-top: 30px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Features Section */
         .features-section {
-            padding: 60px 0;
+            padding: 80px 0;
+            background-color: #2a2a2a;
         }
 
         .feature {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .feature-icon {
-            font-size: 3rem;
-            color: #0d6efd;
+            font-size: 3.5rem;
+            color: #007bff;
+            margin-bottom: 20px;
         }
 
+        .feature h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .feature p {
+            color: #a8a8a8;
+        }
+
+        /* How It Works Section */
+        .how-it-works-section {
+            background-color: #333333;
+            padding: 80px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .how-it-works-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .how-it-works-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #c4c4c4;
+        }
+
+        .how-it-works-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .how-it-works-section ul li {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #d4d4d4;
+        }
+
+        /* Security Section */
+        .security-section {
+            background-color: #2a2a2a;
+            padding: 80px 0;
+        }
+
+        .security-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #ffffff;
+        }
+
+        .security-section p {
+            color: #a8a8a8;
+            margin-bottom: 20px;
+        }
+
+        /* Call to Action Section */
         .cta-section {
-            background-color: #343a40;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: #ffffff;
-            padding: 60px 0;
+            padding: 80px 0;
+            border-radius: 8px;
         }
 
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: #007bff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Footer */
         .footer {
-            background-color: #212529;
+            background-color: #1f2937;
             color: #ffffff;
-            padding: 20px 0;
+            padding: 40px 0;
+            margin-top: 60px;
         }
 
         .footer a {
-            color: #ffffff;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 767px) {
+            .hero-section {
+                padding: 80px 0;
+            }
+
+            .hero-section h1 {
+                font-size: 3rem;
+            }
+
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            .cta-section h2, .security-section h2, .how-it-works-section h2 {
+                font-size: 2rem;
+            }
+
+            .cta-section p, .security-section p, .how-it-works-section p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Phishing Detector</a>
+            <a class="navbar-brand" href="#">Phishing Detector</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                        <a class="nav-link" href="/templates/home.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('login') }}">Detector</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                        <a class="nav-link" href="#">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+                        <a class="nav-link" href="#">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -95,11 +248,11 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section text-center">
+    <section class="hero-section text-center d-flex align-items-center">
         <div class="container">
             <h1>Email Phishing Detection System</h1>
             <p>Protect your inbox from phishing attacks with our advanced detection system using machine learning and NLP techniques.</p>
-            <a href="#start" class="btn btn-light btn-lg">Get Started</a>
+            <a href="#start" class="btn btn-primary btn-lg">Get Started</a>
         </div>
     </section>
 
@@ -132,6 +285,29 @@
         </div>
     </section>
 
+    <!-- How It Works Section -->
+    <section class="how-it-works-section text-center">
+        <div class="container">
+            <h2>How It Works</h2>
+            <p>Our system leverages cutting-edge machine learning algorithms and natural language processing (NLP) techniques to analyze various aspects of emails, including content, metadata, and attachments. Here’s how we protect your inbox:</p>
+            <ul class="list-unstyled">
+                <li><strong>Email Content Analysis:</strong> We scan the email text for patterns and keywords commonly associated with phishing attempts.</li>
+                <li><strong>Header Inspection:</strong> Our system examines the email headers to detect spoofing and other malicious activities.</li>
+                <li><strong>URL and Attachment Scanning:</strong> All links and attachments are checked against a database of known threats and scanned for viruses or malware.</li>
+                <li><strong>Real-Time Updates:</strong> Our detection models are continuously updated with the latest threat intelligence to ensure maximum protection.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="security-section text-center">
+        <div class="container">
+            <h2>Security You Can Trust</h2>
+            <p>We take security seriously. Our platform is built with the highest standards in cybersecurity to ensure your data and communications remain safe. We use encrypted connections, secure authentication, and rigorous testing to safeguard your information.</p>
+            <p>With our system, you can trust that your email communications are protected from the latest phishing threats.</p>
+        </div>
+    </section>
+
     <!-- Call to Action Section -->
     <section class="cta-section text-center">
         <div class="container">
@@ -158,4 +334,5 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -11,7 +11,7 @@
             font-size: 1.25rem;
             font-weight: bold;
             color: #fff;
-            background-color: #dc3545; /* Bootstrap's 'danger' color */
+            background-color: #dc3545;
             padding: 10px 15px;
             border-radius: 5px;
             display: inline-block;
@@ -63,8 +63,20 @@
             margin-top: 20px;
         }
 
-        .btn-close {
-            margin-top: 20px;
+        #link-list {
+            margin-top: 10px;
+        }
+
+        .vt-result {
+            margin-left: 10px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .suspicious-reasons {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #dc3545;
         }
     </style>
 </head>
@@ -79,17 +91,20 @@
                 <h3>{{ email.subject }}</h3>
                 <p><strong>From:</strong> {{ email.from }}</p>
                 <p><strong>Date:</strong> {{ email.date }}</p>
-                <p><strong>Originating IP:</strong> {{ email.ip_address }}
-                    <button id="fetch-ip-details" class="btn btn-info btn-sm">Get IP Details</button>
+                <p><strong>Reply Status:</strong> 
+                    <span class="badge {{ 'badge-success' if email.reply_status == 'Safe' else 'badge-warning' }}">
+                        {{ email.reply_status }}
+                    </span>
                 </p>
-                {% if email.is_blacklisted %}
-                    <p style="color: red;"><strong>Warning:</strong> This IP is blacklisted in the following DNSBL(s): {{ ', '.join(email.blacklisted_in) }}</p>
-                {% else %}
-                    <p><strong>Status:</strong> This IP is not blacklisted.</p>
-                {% endif %}
-                <p class="phishing-probability"><strong>Phishing Probability:</strong> {{ email.phishing_probability }}%</p>
+                <p><strong>Phishing Probability:</strong> <span class="phishing-probability">{{ email.phishing_probability }}%</span></p>
+                
+                <button id="analyze-email" class="btn btn-info btn-sm">Analyze Email</button>
             </div>
             <div class="card-body">
+                <h4>IP Address:</h4>
+                <p><strong>{{ email.ip_address }}</strong></p>
+                <p id="ip-status"></p>
+
                 <div id="ip-details" style="display:none;">
                     <h4>IP Details:</h4>
                     <table class="table table-bordered">
@@ -106,17 +121,52 @@
                         <tr><th>Security Threat Level</th><td id="detail-threat"></td></tr>
                     </table>
                     <!-- Button to show location on Google Maps -->
-                    <button id="show-map" class="btn btn-secondary btn-map" style="display:none;" onclick="openMap()">Show on Map</button>
-                    <!-- Close Details button -->
-                    <button id="close-ip-details" class="btn btn-secondary btn-close">Close Details</button>
-                </div>                
+                    <button id="show-map" class="btn btn-secondary" style="display:none;" onclick="openMap()">Show on Map</button>
+                </div>
+
+                <h4>Attachments:</h4>
+                {% if email.attachments %}
+                <ul>
+                    {% for attachment in email.attachments %}
+                    <li>
+                        <strong>{{ attachment.filename }}</strong> ({{ attachment.content_type }})
+                        {% if attachment.is_malicious %}
+                        <span style="color:red;"><strong>Malicious</strong>: {{ attachment.virus_name }}</span>
+                        {% else %}
+                        <span style="color:green;"><strong>Clean</strong></span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No attachments found.</p>
+                {% endif %}
+
+                <h4>Extracted Links:</h4>
+                <div id="link-list">
+                    {% if email.links %}
+                    <ul>
+                        {% for link in email.links %}
+                        <li>
+                            <a href="{{ link.url }}" target="_blank">{{ link.url }}</a>
+                            <span id="result-{{ loop.index }}" class="vt-result">{{ link.vt_result }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>No links found in the email body.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('fetch-ip-details').addEventListener('click', function() {
+        document.getElementById('analyze-email').addEventListener('click', function() {
             const ip = "{{ email.ip_address }}";
+            const emailId = "{{ email.id }}";
+
+            // Fetch and display IP details
             fetch(`/api/ip-details/${ip}`)
                 .then(response => response.json())
                 .then(data => {
@@ -131,6 +181,7 @@
                     document.getElementById('detail-longitude').textContent = data.longitude || 'N/A';
                     document.getElementById('detail-isp').textContent = data.isp || 'N/A';
 
+                    // Display threat level with categorization
                     const threatLevel = data.threat_level !== undefined ? data.threat_level : null;
                     let threatCategory = 'N/A';
                     if (threatLevel !== null) {
@@ -146,17 +197,50 @@
 
                     document.getElementById('ip-details').style.display = 'block';
 
+                    // Show the "Show on Map" button if latitude and longitude are available
                     if (data.latitude && data.longitude) {
                         window.latitude = data.latitude;
                         window.longitude = data.longitude;
                         document.getElementById('show-map').style.display = 'inline-block';
                     }
+
+                    // Display if IP is blacklisted
+                    if (data.is_blacklisted) {
+                        document.getElementById('ip-status').innerHTML = `<p style="color: red;"><strong>Warning:</strong> This IP is blacklisted in the following DNSBL(s): ${data.blacklisted_in.join(', ')}</p>`;
+                    } else {
+                        document.getElementById('ip-status').innerHTML = `<p><strong>Status:</strong> This IP is not blacklisted.</p>`;
+                    }
                 })
                 .catch(error => console.error('Error fetching IP details:', error));
-        });
 
-        document.getElementById('close-ip-details').addEventListener('click', function() {
-            document.getElementById('ip-details').style.display = 'none';
+            // Scan links in the email
+            const links = {{ email.links|tojson }};
+            const linkList = document.getElementById('link-list');
+            linkList.innerHTML = ''; // Clear any existing content
+
+            links.forEach((link, index) => {
+                fetch(`/api/scan-link`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: link.url }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let resultText = '';
+                    if (data.error) {
+                        resultText = `Error: ${data.error}`;
+                    } else {
+                        resultText = `Reputation: ${data.reputation}, Malicious: ${data.malicious}, Suspicious: ${data.suspicious}, Harmless: ${data.harmless}`;
+                    }
+                    linkList.innerHTML += `<li><a href="${link.url}" target="_blank">${link.url}</a> - ${resultText}</li>`;
+                })
+                .catch(error => {
+                    linkList.innerHTML += `<li><a href="${link.url}" target="_blank">${link.url}</a> - Error detecting link</li>`;
+                    console.error('Error detecting link:', error);
+                });
+            });
         });
 
         function openMap() {
