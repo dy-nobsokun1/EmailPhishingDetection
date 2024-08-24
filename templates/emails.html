@@ -47,10 +47,8 @@
     }
 
     .classification {
-        display: none;
         margin-top: 10px;
-        padding: 10px;
-        color: #721c24;
+        color: #343a40;
         border: 1px solid;
         border-radius: 4px;
     }
@@ -88,17 +86,19 @@
     <a href="/" class="btn btn-secondary mb-3">Go Back</a>
     <div id="email-list" class="list-group">
         {% for email in emails %}
-        <a href="/email/{{ email.id }}?username={{ username }}&app_password={{ app_password }}&imap_server={{ imap_server }}" class="list-group-item email-item">
-            <div class="row">
+        <a href="/email/{{ email.id }}?username={{ username }}&app_password={{ app_password }}&imap_server={{ imap_server }}" class="list-group-item email-item p-0">
+            <span style="position:absolute; width: 25px; height: 100%; background-color: {% if email.phishing_probability <= 40 %}green{% elif email.phishing_probability <= 60 %}yellow{% else %}red{% endif %};"></span>
+            <div class="row m-3" style="padding-left: 20px;">
                 <div class="col-md-8">
                     <h5 class="mb-1">{{ email.subject }}</h5>
                     <p class="mb-1"><strong>From:</strong> {{ email.from }}</p>
                     <p class="mb-1"><strong>Snippet:</strong> {{ email.snippet }}</p>
-                    <button class="btn btn-info mt-2" onclick="event.preventDefault(); toggleClassification({{ loop.index0 }});">
+                    <!-- <button class="btn btn-info mt-2" onclick="event.preventDefault(); toggleClassification({{ loop.index0 }});">
                         Show Classification
-                    </button>
-                    <div id="classification-{{ loop.index0 }}" class="classification" style="background-color: {% if email.phishing_probability <= 40 %}green{% elif email.phishing_probability <= 60 %}yellow{% else %}red{% endif %}; border-color: {% if email.phishing_probability <= 40 %}#c3e6cb{% elif email.phishing_probability <= 60 %}#ffeeba{% else %}#f5c6cb{% endif %};">
-                        <strong>Phishing Probability:</strong> {{ email.phishing_probability }}%
+                    </button> -->
+                    <div id="classification-{{ loop.index0 }}" class="classification" style=" border-color: {% if email.phishing_probability <= 40 %}#c3e6cb{% elif email.phishing_probability <= 60 %}#ffeeba{% else %}#f5c6cb{% endif %};">
+                        <span class="position-absolute" style="width: {{email.phishing_probability}}%; background-color: {% if email.phishing_probability <= 40 %}green{% elif email.phishing_probability <= 60 %}yellow{% else %}red{% endif %}; opacity: 25%; z-index: 0;">.</span>
+                        <strong class="m-2">Phishing Probability:</strong> {{ email.phishing_probability }}%
                     </div>
                 </div>
                 <div class="col-md-4 email-date">
@@ -150,9 +150,9 @@
 
 
 
-    function toggleClassification(index) {
-        var element = document.getElementById('classification-' + index);
-        element.style.display = element.style.display === 'none' ? 'block' : 'none';
-    }
+    // function toggleClassification(index) {
+    //     var element = document.getElementById('classification-' + index);
+    //     element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    // }
 </script>
 {% endblock %}
