@@ -21,18 +21,52 @@
 
         /* Navbar Styles */
         .navbar {
+            display: flex;
+            flex-direction: column;
+            position: relative;
             background-color: #111;
+            padding: 0;
+        }
+        .navbar .container {
             padding: 15px 0;
+        }
+        .navbar .navbar-line {
+            width: 100%;
+            height: 5px; 
+            background-image: linear-gradient(to right, #00ffff, #ff00bb);
         }
 
         .navbar-brand, .nav-link {
+            position: relative;
+            left: 0;
+            margin: 0 7px;
             color: #ffffff !important;
             font-weight: 600;
             font-size: 1.1rem;
+            transition: color ease 0.5s, left ease 0.5s;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .navbar-brand:hover{
+            left: 5px;
         }
 
-        .nav-link:hover {
-            color: #007bff !important;
+        .navbar-brand-span1, .navbar-brand-span2{
+            transition: color ease 0.5s;
+        }
+        .navbar-brand:hover .navbar-brand-span1{
+            color: #00ffff !important;
+        }
+        .navbar-brand:hover .navbar-brand-span2{
+            color: #ff00bb !important;
+        }
+
+        .nav-link-1:hover {
+            color: #00ffff !important;
+        }
+        .nav-link-2:hover {
+            color: #ff00bb !important;
         }
 
         /* Hero Section */
@@ -75,20 +109,26 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            margin: auto;
-            padding: 40px 0;
-            background-color: #111;
+            padding: 5px 0;
+            background-image: linear-gradient(to right, #00ffff, #ff00bb);
         }
 
         .feature {
             width: 100%;
             display: flex;
             justify-content: space-evenly;
-            padding: 0 15%;
-            margin: 2% 0;
+            padding: 4% 15%;
         }
 
         .feature-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #222;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            width: 15%;
+            aspect-ratio: 1 / 1;
             font-size: 3.5rem;
             color: #fff;
             margin: 20px;
@@ -113,7 +153,7 @@
 
         /* How It Works Section */
         .how-it-works-section {
-            background-color: #222;
+            background-color: #171717;
             padding: 80px 0;
             border-radius: 8px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
@@ -124,23 +164,27 @@
             font-weight: 700;
             margin-bottom: 40px;
             color: #ffffff;
+            text-align: left;
         }
 
         .how-it-works-section p {
             font-size: 1.2rem;
             margin-bottom: 30px;
             color: #c4c4c4;
+            text-align: left;
         }
 
         .how-it-works-section ul {
             list-style: none;
             padding: 0;
+            text-align: left;
         }
 
         .how-it-works-section ul li {
             margin-bottom: 20px;
             font-size: 1.1rem;
             color: #d4d4d4;
+            text-align: left;
         }
 
         /* Security Section */
@@ -240,27 +284,31 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">Phishing Detector</a>
+            <a class="navbar-brand" href="#">
+                <span class="navbar-brand-span1">Phishing</span>
+                <span class="navbar-brand-span2"> Detector</span>
+            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/templates/home.html">Home</a>
+                        <a class="nav-link nav-link-1" href="/templates/home.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Detector</a>
+                        <a class="nav-link nav-link-2" href="{{ url_for('login') }}">Detector</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link nav-link-1" href="#">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link nav-link-2" href="#">Contact</a>
                     </li>
                 </ul>
             </div>
         </div>
+        <span class="navbar-line"></span>
     </nav>
 
     <!-- Hero Section -->
@@ -275,8 +323,8 @@
 
     <!-- Features Section -->
     <section class="features-section text-center">
-            <div class="row-md-4 feature">
-                <div class="feature-icon" style="color: #ff00b7;">
+            <div class="row-md-4 feature" style="background-color: #111;">
+                <div class="feature-icon" style="color: #ff00bb;">
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 <div class="col feature-disc">
@@ -284,17 +332,17 @@
                     <p>Utilizes state-of-the-art machine learning models to detect and prevent phishing attempts.</p>
                 </div>
             </div>
-            <div class="row-md-4 feature">
+            <div class="row-md-4 feature" style="background-color: #151515;">
                 <div class="col feature-disc">
                     <h3>Comprehensive Analysis</h3>
                     <p>Analyzes email content, headers, URLs, and attachments to provide thorough protection.</p>
                 </div>
-                <div class="feature-icon" style="color: #00fff7;">
+                <div class="feature-icon" style="color: #00ffff;">
                     <i class="fas fa-envelope-open-text"></i>
                 </div>
             </div>
-            <div class="row-md-4 feature">
-                <div class="feature-icon" style="color: #ff00b7;">
+            <div class="row-md-4 feature" style="background-color: #111;">
+                <div class="feature-icon" style="color: #ff00bb;">
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <div class="col feature-disc">
@@ -307,7 +355,7 @@
     <!-- How It Works Section -->
     <section class="how-it-works-section text-center">
         <div class="container">
-            <h2>How It Works</h2>
+            <h2>How Does It Work?</h2>
             <p>Our system leverages cutting-edge machine learning algorithms and natural language processing (NLP) techniques to analyze various aspects of emails, including content, metadata, and attachments. Here’s how we protect your inbox:</p>
             <ul class="list-unstyled">
                 <li><strong>Email Content Analysis:</strong> We scan the email text for patterns and keywords commonly associated with phishing attempts.</li>
