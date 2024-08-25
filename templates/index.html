@@ -126,7 +126,8 @@
             align-items: center;
             background-color: #222;
             border: 2px solid transparent;
-            border-radius: 10px;
+            border-image: linear-gradient(to right, #00ffff, #ff00bb) 30% round;
+            border-image-repeat: stretch;
             width: 15%;
             aspect-ratio: 1 / 1;
             font-size: 3.5rem;
@@ -153,10 +154,26 @@
 
         /* How It Works Section */
         .how-it-works-section {
-            background-color: #171717;
-            padding: 80px 0;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0;
             border-radius: 8px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .how-it-works-section .container {
+            position: relative;
+            flex-grow: 1;
+            left: 0;
+            margin: 0;
+            padding: 80px 5%;
+            background-color: #171717;
+            box-shadow: 5px 0 5px 0 #111;
+        }
+
+        .how-it-works-section img{
+            min-width: 500px;
         }
 
         .how-it-works-section h2 {
@@ -189,8 +206,17 @@
 
         /* Security Section */
         .security-section {
+            display: flex;
+            padding: 5px 0;
+            background-image: linear-gradient(to right, #00ffff, #ff00bb);
+        }
+
+        .security-section .info {
             background-color: #2a2a2a;
             padding: 80px 0;
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         .security-section h2 {
@@ -353,25 +379,28 @@
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works-section text-center">
+    <section class="how-it-works-section text-left">
         <div class="container">
             <h2>How Does It Work?</h2>
             <p>Our system leverages cutting-edge machine learning algorithms and natural language processing (NLP) techniques to analyze various aspects of emails, including content, metadata, and attachments. Here’s how we protect your inbox:</p>
             <ul class="list-unstyled">
-                <li><strong>Email Content Analysis:</strong> We scan the email text for patterns and keywords commonly associated with phishing attempts.</li>
-                <li><strong>Header Inspection:</strong> Our system examines the email headers to detect spoofing and other malicious activities.</li>
-                <li><strong>URL and Attachment Scanning:</strong> All links and attachments are checked against a database of known threats and scanned for viruses or malware.</li>
-                <li><strong>Real-Time Updates:</strong> Our detection models are continuously updated with the latest threat intelligence to ensure maximum protection.</li>
+                <li><strong style="color: #00ffff;">Email Content Analysis:</strong> We scan the email text for patterns and keywords commonly associated with phishing attempts.</li>
+                <li><strong style="color: #ff00bb;">Header Inspection:</strong> Our system examines the email headers to detect spoofing and other malicious activities.</li>
+                <li><strong style="color: #00ffff;">URL and Attachment Scanning:</strong> All links and attachments are checked against a database of known threats and scanned for viruses or malware.</li>
+                <li><strong style="color: #ff00bb;">Real-Time Updates:</strong> Our detection models are continuously updated with the latest threat intelligence to ensure maximum protection.</li>
             </ul>
         </div>
+        <img src="../static/homepage_how_it_works.jpg" />
     </section>
 
     <!-- Security Section -->
     <section class="security-section text-center">
-        <div class="container">
-            <h2>Security You Can Trust</h2>
-            <p>We take security seriously. Our platform is built with the highest standards in cybersecurity to ensure your data and communications remain safe. We use encrypted connections, secure authentication, and rigorous testing to safeguard your information.</p>
-            <p>With our system, you can trust that your email communications are protected from the latest phishing threats.</p>
+        <div class="info">
+            <div class="container">
+                <h2>Security You Can Trust</h2>
+                <p>We take security seriously. Our platform is built with the highest standards in cybersecurity to ensure your data and communications remain safe. We use encrypted connections, secure authentication, and rigorous testing to safeguard your information.</p>
+                <p>With our system, you can trust that your email communications are protected from the latest phishing threats.</p>
+            </div>
         </div>
     </section>
 
