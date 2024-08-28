@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 from markupsafe import Markup
 import imaplib
 import email
@@ -13,7 +13,12 @@ import requests
 import socket
 import pyclamd 
 import base64
+from dotenv import load_dotenv
+from urllib.parse import urlparse
+import os
 
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -33,8 +38,9 @@ X_sample = vectorizer.transform(df_sample['text'])
 # Initialize SHAP KernelExplainer
 explainer = shap.KernelExplainer(model.named_steps['multinomialnb'].predict_proba, X_sample)
 
-VIRUSTOTAL_API_KEY = 'f86c0f0ab1eb430a491ce5180eb8d14c56cbd654c4c6b74d465a7dbb04d1625b'
-
+VIRUSTOTAL_API_KEY = os.getenv('VIRUSTOTAL_API_KEY')
+api_key = os.getenv('API_KEY_1')
+API_KEY = os.getenv('API_KEY_2')
 def decode_subject(subject):
     decoded_bytes, encoding = decode_header(subject)[0]
     if isinstance(decoded_bytes, bytes):
@@ -106,7 +112,7 @@ def get_isp_from_iplocation(ip):
 
 def get_ip_location(ip):
     """Get the geolocation of an IP address using the original API."""
-    API_KEY = 'b1edeb7035a0e8185837847e89e2c1d6'
+
     original_api_url = f'http://api.ipapi.com/{ip}?access_key={API_KEY}'
     
     try:
@@ -155,36 +161,33 @@ def scan_attachment_for_viruses(attachment_data):
     except Exception as e:
         logging.error(f"Error scanning attachment for viruses: {e}")
 
+def extract_main_domain(url):
+    """
+    Extract the scheme and main domain from a URL.
+    """
+    parsed_url = urlparse(url)
+    # Reconstruct the URL with only the scheme and netloc (domain)
+    main_domain = f"{parsed_url.scheme}://{parsed_url.netloc}"
+    return main_domain
+
 def extract_links_from_text(text):
-    # Regular expression to match URLs
+    """
+    Extracts all unique main domains from the given text.
+    """
     url_pattern = re.compile(r'(https?://[^\s]+)')
-    return url_pattern.findall(text)
-
-def check_url_with_virustotal(url):
-    vt_url = 'https://www.virustotal.com/vtapi/v2/url/report'
-    params = {'apikey': VIRUSTOTAL_API_KEY, 'resource': url}
-
-    try:
-        response = requests.get(vt_url, params=params)
-        result = response.json()
-
-        # Handle rate limiting
-        if response.status_code == 204:
-            logging.error("Rate limit exceeded. Waiting for a minute before retrying.")
-            time.sleep(60)
-            response = requests.get(vt_url, params=params)
-            result = response.json()
-
-        if result['response_code'] == 1:
-            positives = result.get('positives', 0)
-            total = result.get('total', 0)
-            return f"Detected by {positives}/{total} scans"
-        else:
-            return "No data available"
-
-    except Exception as e:
-        logging.error(f"Error checking URL with VirusTotal: {e}")
-        return "Error checking URL"
+    urls = url_pattern.findall(text)
+    
+    # Use a set to keep track of unique main domains
+    main_domains_set = set()
+    unique_main_domains = []
+    
+    for url in urls:
+        main_domain = extract_main_domain(url)
+        if main_domain not in main_domains_set:
+            main_domains_set.add(main_domain)
+            unique_main_domains.append(main_domain)
+    
+    return unique_main_domains
 
 def scan_url_with_virustotal(url):
     headers = {
@@ -295,8 +298,7 @@ def classify_email(text):
     return phishing_proba, classification
 
 def check_ip_threat_level(ip):
-    """Check the security threat level of an IP address using AbuseIPDB."""
-    api_key = '1263e176dc70de7b1da2f096f071c1529fdb250915e18a607eb641a856713f041bb5aeb3c71ab071'  # Your provided API key
+    """Check the security threat level of an IP address using AbuseIPDB."""  # Your provided API key
     url = f'https://api.abuseipdb.com/api/v2/check'
     
     headers = {
@@ -325,12 +327,6 @@ def check_ip_threat_level(ip):
     except Exception as e:
         logging.error(f"Error retrieving threat level from AbuseIPDB for IP {ip}: {e}")
         return {}
-
-@app.route('/api/ip-threat/<ip_address>')
-def api_ip_threat(ip_address):
-    # Check the security threat level of the IP address
-    threat_info = check_ip_threat_level(ip_address)
-    return jsonify(threat_info)
 
 def highlight_phishing_areas(text):
     # Vectorize the text
@@ -454,6 +450,7 @@ def fetch_email_by_id(username, app_password, imap_server, email_id, mailbox='IN
 def index():
     return render_template('index.html')
 
+
 @app.route('/fetch-emails', methods=['POST'])
 def fetch_emails_route():
     username = request.form.get('username')
@@ -461,21 +458,27 @@ def fetch_emails_route():
     imap_server = request.form.get('imap_server')
     start = int(request.form.get('start', 0))  # Get the 'start' parameter
 
-    # Input validation (basic example)
+    # Input validation
     if not all([username, app_password, imap_server]):
         logging.error("Missing credentials or server information.")
-        return jsonify({'error': 'Missing necessary parameters'}), 400
-
-    logging.debug(f"Fetching emails for user: {username} with server: {imap_server} starting from {start}")
+        flash('Missing necessary credentials or server information.', 'error')
+        return redirect(url_for('login'))
 
     try:
         emails = fetch_emails(username, app_password, imap_server, start=start)
+        if emails is None:  # You could modify fetch_emails to return None on auth failures
+            flash('Authentication failed. Please check your credentials and try again.', 'error')
+            return redirect(url_for('login'))
         logging.debug(f"Fetched {len(emails)} emails")
         return render_template('emails.html', emails=emails, username=username, app_password=app_password, imap_server=imap_server, start=start)
+    except imaplib.IMAP4.error as e:
+        logging.error(f"IMAP error: {e}")
+        flash('Failed to authenticate. Please check your credentials.', 'error')
+        return redirect(url_for('login'))
     except Exception as e:
-        logging.error(f"Failed to fetch emails: {e}")
-        return jsonify({'error': 'Failed to fetch emails'}), 500
-
+        logging.error(f"An error occurred: {e}")
+        flash('An unexpected error occurred. Please try again.', 'error')
+        return redirect(url_for('login'))
 
 @app.route('/email/<email_id>')
 def email_detail(email_id):
@@ -533,6 +536,11 @@ def contact():
 def about():
     return render_template('about_us.html')
 
+@app.route('/api/ip-threat/<ip_address>')
+def api_ip_threat(ip_address):
+    # Check the security threat level of the IP address
+    threat_info = check_ip_threat_level(ip_address)
+    return jsonify(threat_info)
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5002, debug=True)

@@ -3,18 +3,100 @@
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-<div class="container mt-5 pt-5">
-    <h1 class="text-center">About Us</h1>
-    <p class="lead text-center">Meet the dedicated team behind the Phishing Detector project, driven by the goal of enhancing cybersecurity through advanced technology and expert guidance.</p>
+<style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #ffffff;
+    }
+
+    p.lead {
+        text-align: center;
+        font-size: 1.25rem;
+        margin-bottom: 40px;
+        color: #aaaaaa;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .col-md-6, .col-lg-4, .col-md-8, .col-lg-6 {
+        width: 100%;
+        max-width: 33%;
+        box-sizing: border-box;
+        padding: 15px;
+    }
+
+    .card {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #ffffff;
+    }
+
+    .card-subtitle {
+        font-size: 1rem;
+        margin-bottom: 15px;
+        color: #bbbbbb;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #dddddd;
+    }
+</style>
+
+<div class="container">
+    <h1>About Us</h1>
+    <p class="lead">Meet the dedicated team behind the Phishing Detector project, driven by the goal of enhancing cybersecurity through advanced technology and expert guidance.</p>
     
     <!-- Mentor Section -->
     <div class="row justify-content-center mb-5">
         <div class="col-md-8 col-lg-6 mb-4">
-            <div class="card h-100">
-                <img src="https://files.oaiusercontent.com/file-psHYISwrx232N8bYfnU6Itkv?se=2024-08-03T10%3A02%3A23Z&sp=r&sv=2023-11-03&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D99f73df4-0d6a-4cc3-a67f-01e1a7f94f77.webp&sig=RIyQILo48q3QyqCGcwTvfivsQKqMW/OTdzNOc80GDfc%3D" class="card-img-top" alt="Mentor Soaphorn">
+            <div class="card">
+                <img src="https://www.iit.edu/sites/default/files/styles/width_1280/public/2020-12/kai_shu_1280x850.jpg?itok=aHvzzJCP" class="card-img-top" alt="Mentor Soaphorn">
                 <div class="card-body">
                     <h5 class="card-title">Soaphorn</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Mentor</h6>
+                    <h6 class="card-subtitle">Mentor</h6>
                     <p class="card-text">Soaphorn has been instrumental in guiding the strategic direction and providing expertise that has significantly shaped the project. His insights ensure that we approach cybersecurity challenges with innovative solutions.</p>
                 </div>
             </div>
@@ -24,45 +106,49 @@
     <!-- Team Members Section -->
     <div class="row">
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-                <img src="https://as1.ftcdn.net/v2/jpg/05/93/82/78/1000_F_593827894_KbwYtuFPTJjdDFg5Ir2cNqBptAgb9cnk.jpg" class="card-img-top" alt="CHUN Phallamonunhh">
+            <div class="card">
+                <img src="https://www.bbva.com/wp-content/uploads/2021/02/ingenieras-e1612975846829.jpg" class="card-img-top" alt="CHUN Phallamonunhh">
                 <div class="card-body">
                     <h5 class="card-title">CHUN Phallamonunhh</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Project Manager</h6>
+                    <h6 class="card-subtitle">Project Manager</h6>
                     <p class="card-text">CHUN oversees project management, ensuring timelines, resources, and communications are effectively coordinated to meet our ambitious goals.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-                <img src="https://t3.ftcdn.net/jpg/05/56/29/36/360_F_556293653_e9P80XtK4yyDd8WU1vRtdqSU1Vym7zoX.webp" class="card-img-top" alt="HENG Bunkheang">
+            <div class="card">
+                <img src="https://pbs.twimg.com/media/FMqZrOIWUAUBWX4?format=jpg&name=large" class="card-img-top" alt="HENG Bunkheang">
                 <div class="card-body">
                     <h5 class="card-title">HENG Bunkheang</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Machine Learning Specialist</h6>
+                    <h6 class="card-subtitle">Machine Learning Specialist</h6>
                     <p class="card-text">Specializing in AI, HENG develops sophisticated models to accurately detect phishing emails, enhancing our system's effectiveness.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-                <img src="https://files.oaiusercontent.com/file-Y4Z9ThvxkqwCRGJ6Rtrm6qhY?se=2024-08-03T09%3A58%3A00Z&sp=r&sv=2023-11-03&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3Df6959c3c-0231-4e60-81ba-e30ad9e3252c.webp&sig=wW0yiuFnNsHOIAmkV2WxkpzQT6BeLcinSEddDcbgfyI%3D" class="card-img-top" alt="HEANG Tong and HENG Shito">
+            <div class="card">
+                <img src="https://media.sciencephoto.com/f0/08/41/30/f0084130-800px-wm.jpg" class="card-img-top" alt="HEANG Tong and HENG Shito">
                 <div class="card-body">
                     <h5 class="card-title">HEANG Tong & HENG Shito</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Integration Specialists</h6>
+                    <h6 class="card-subtitle">Integration Specialists</h6>
                     <p class="card-text">This dynamic duo works seamlessly to integrate AI models with our systems and develops robust APIs to support scalability and security.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-                <img src="https://img.freepik.com/premium-photo/young-software-developer-ai-generated_1059430-18874.jpg" class="card-img-top" alt="Pich KhauongPunroth">
+            <div class="card">
+                <img src="https://img.freepik.com/premium-photo/asian-girls-learning-about-computer-science-programming-through-interactive_288945-2364.jpg" class="card-img-top" alt="Pich KhauongPunroth">
                 <div class="card-body">
                     <h5 class="card-title">Pich KhauongPunroth</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Security Analyst</h6>
+                    <h6 class="card-subtitle">Security Analyst</h6>
                     <p class="card-text">Pich excels in conducting rigorous real-world testing and is pivotal in acquiring datasets for sample phishing emails, bolstering our model's training and accuracy.</p>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="mission-vision-section">
+        <h2>Our Mission & Vision</h2>
+        <p>Our mission is to protect individuals and organizations from the ever-growing threat of phishing attacks through advanced machine learning techniques and real-time threat analysis. We envision a world where email communication is safe, secure, and free from malicious actors, empowering users to interact with confidence and peace of mind.</p>
     </div>
 </div>
 {% endblock %}

@@ -98,7 +98,8 @@
                 </p>
                 <p><strong>Phishing Probability:</strong> <span class="phishing-probability">{{ email.phishing_probability }}%</span></p>
                 
-                <button id="analyze-email" class="btn btn-info btn-sm">Analyze Email</button>
+                <button id="show-ip-details" class="btn btn-info btn-sm">Show IP Details</button>
+                <button id="analyze-all-links" class="btn btn-warning btn-sm">Analyze All Links</button>
             </div>
             <div class="card-body">
                 <h4>IP Address:</h4>
@@ -148,7 +149,7 @@
                     <ul>
                         {% for link in email.links %}
                         <li>
-                            <a href="{{ link.url }}" target="_blank">{{ link.url }}</a>
+                            <span>{{ link.url }}</span>
                             <span id="result-{{ loop.index }}" class="vt-result">{{ link.vt_result }}</span>
                         </li>
                         {% endfor %}
@@ -162,9 +163,8 @@
     </div>
 
     <script>
-        document.getElementById('analyze-email').addEventListener('click', function() {
+        document.getElementById('show-ip-details').addEventListener('click', function() {
             const ip = "{{ email.ip_address }}";
-            const emailId = "{{ email.id }}";
 
             // Fetch and display IP details
             fetch(`/api/ip-details/${ip}`)
@@ -212,36 +212,59 @@
                     }
                 })
                 .catch(error => console.error('Error fetching IP details:', error));
+        });
 
-            // Scan links in the email
-            const links = {{ email.links|tojson }};
-            const linkList = document.getElementById('link-list');
-            linkList.innerHTML = ''; // Clear any existing content
+        document.getElementById('analyze-all-links').addEventListener('click', function() {
+        const links = {{ email.links|tojson }};
+        const linkList = document.getElementById('link-list');
 
-            links.forEach((link, index) => {
-                fetch(`/api/scan-link`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ url: link.url }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    let resultText = '';
-                    if (data.error) {
-                        resultText = `Error: ${data.error}`;
+        links.forEach((link, index) => {
+            // Analyze the link
+            fetch(`/api/scan-link`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: link.url }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultText = '';
+                let color = '';
+
+                if (data.error) {
+                    resultText = `Error: ${data.error}`;
+                    color = 'gray';  // Neutral color for errors
+                } else {
+                    // Determine if the link is safe, suspicious, or malicious
+                    if (data.malicious > 0) {
+                        resultText = "Malicious: Avoid clicking this link.";
+                        color = 'red';  // Red for malicious links
+                    } else if (data.suspicious > 0) {
+                        resultText = "Suspicious: Be cautious with this link.";
+                        color = 'orange';  // Orange for suspicious links
+                    } else if (data.harmless > 0) {
+                        resultText = "Safe: No issues detected.";
+                        color = 'green';  // Green for safe links
                     } else {
-                        resultText = `Reputation: ${data.reputation}, Malicious: ${data.malicious}, Suspicious: ${data.suspicious}, Harmless: ${data.harmless}`;
+                        resultText = "No data available.";
+                        color = 'gray';  // Neutral color for no data
                     }
-                    linkList.innerHTML += `<li><a href="${link.url}" target="_blank">${link.url}</a> - ${resultText}</li>`;
-                })
-                .catch(error => {
-                    linkList.innerHTML += `<li><a href="${link.url}" target="_blank">${link.url}</a> - Error detecting link</li>`;
-                    console.error('Error detecting link:', error);
-                });
+                }
+                
+                // Update the result text in the UI with the appropriate color
+                const resultElement = document.getElementById(`result-${index}`);
+                resultElement.textContent = resultText;
+                resultElement.style.color = color;  // Set the color based on the result
+            })
+            .catch(error => {
+                const resultElement = document.getElementById(`result-${index}`);
+                resultElement.textContent = "Error detecting link";
+                resultElement.style.color = 'gray';  // Neutral color for errors
+                console.error('Error detecting link:', error);
             });
         });
+    });
 
         function openMap() {
             if (window.latitude && window.longitude) {

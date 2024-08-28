@@ -79,7 +79,3 @@ def calculate_similarity(email_text, tfidf_vectorizer, rf_classifier, X_train_tf
 
     return phishing_probability
 
-# Example usage
-phishing_example = df[df['Email Type'] == 'Phishing Email'].iloc[0]['Email Text']
-phishing_probability = calculate_similarity(phishing_example, tfidf_vectorizer, rf_classifier, X_train_tfidf)
-print(f"Phishing Probability for Known Example: {phishing_probability}%")
