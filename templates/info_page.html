@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}How Our Phishing Detection System Works{% endblock %}
+
+{% block content %}
+<style>
+    .info-section {
+        padding: 60px 20px;
+        background-color: #1f1f1f;
+        color: #d4d4d4;
+    }
+
+    .info-section h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .info-section h3 {
+        font-size: 2rem;
+        color: #ffffff;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .info-section p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: #c4c4c4;
+        text-align: justify;
+        line-height: 1.8;
+    }
+
+    .info-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 auto 40px;
+        max-width: 800px;
+        text-align: left;
+    }
+
+    .info-section ul li {
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+        color: #d4d4d4;
+        position: relative;
+        padding-left: 20px;
+    }
+
+    .info-section ul li::before {
+        content: "\f00c"; /* FontAwesome check icon */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        top: 3px;
+        color: #00ffff;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 30px;
+        font-size: 1.2rem;
+        margin-top: 40px;
+        transition: background-color 0.3s ease;
+        text-align: center;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+
+<section class="info-section">
+    <div class="container">
+        <h2>Understanding Our Phishing Detection System</h2>
+
+        <div class="content-section">
+            <h3>Email Content Analysis</h3>
+            <p>Our phishing detection system starts with a deep analysis of the email content. This process involves scanning the text for specific patterns, keywords, and phrases that are frequently found in phishing emails. These might include urgent calls to action, requests for sensitive information, or language that attempts to create a false sense of urgency. By identifying these indicators, our system can effectively flag emails that contain potential phishing content.</p>
+        </div>
+
+        <div class="content-section">
+            <h3>Header Inspection</h3>
+            <p>The email header contains vital metadata, such as the sender’s email address, the servers the email passed through, and its authentication details. Our system scrutinizes these headers to detect anomalies like spoofed addresses, unverified senders, and discrepancies between the sender’s domain and the content. This analysis helps us to identify phishing attempts that are trying to impersonate legitimate sources.</p>
+        </div>
+
+        <div class="content-section">
+            <h3>URL and Attachment Scanning</h3>
+            <p>Phishing emails often include malicious links and attachments. Our system checks all URLs and attachments within an email by comparing them against a constantly updated database of known threats. URLs are analyzed to see if they point to dangerous websites, and attachments are scanned for viruses and malware. This ensures that any potentially harmful content is flagged before it can cause damage.</p>
+        </div>
+
+        <div class="content-section">
+            <h3>Real-Time Updates</h3>
+            <p>Cybersecurity threats are always evolving. To stay ahead of these threats, our system is continuously updated with the latest threat intelligence. We employ machine learning algorithms that adapt to new phishing techniques as they emerge, ensuring that our detection system remains effective against the latest phishing strategies. This real-time updating mechanism provides robust, up-to-date protection for all users.</p>
+        </div>
+
+        <div class="content-section">
+            <h3>What Happens After Detection?</h3>
+            <p>After the analysis is complete, each email is categorized as safe, suspicious, or dangerous. If an email is found to be suspicious or dangerous, the user is notified with a detailed explanation of why the email was flagged. This includes highlighting problematic phrases, showing which URLs or attachments were identified as threats, and providing guidance on how to handle the email safely.</p>
+        </div>
+
+        <div class="content-section">
+            <h3>Why Choose Our System?</h3>
+            <p>Our phishing detection system is designed to be both comprehensive and user-friendly. By using advanced machine learning models and regularly updated databases, we ensure that our system provides top-tier protection against phishing attacks. The intuitive interface makes it easy for users to understand and act on the information provided, making our system suitable for both individuals and organizations looking to secure their email communications.</p>
+        </div>
+
+        <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Start Detecting Emails</a>
+    </div>
+</section>
+{% endblock %}

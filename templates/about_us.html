@@ -83,6 +83,63 @@
         line-height: 1.5;
         color: #dddddd;
     }
+
+    .section-title {
+        font-size: 2rem;
+        margin-top: 50px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .mission-vision-section {
+        margin-top: 50px;
+        background-color: #1b1b1b;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .mission-vision-section h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .mission-vision-section p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #dddddd;
+    }
+
+    .project-details {
+        margin-top: 50px;
+        padding: 20px;
+        background-color: #1b1b1b;
+        border-radius: 8px;
+    }
+
+    .project-details h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        color: #ffffff;
+    }
+
+    .project-details p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #dddddd;
+    }
+
+    .project-details ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        color: #dddddd;
+    }
+
+    .project-details ul li {
+        margin-bottom: 10px;
+    }
 </style>
 
 <div class="container">
@@ -104,6 +161,7 @@
     </div>
 
     <!-- Team Members Section -->
+    <h2 class="section-title">Meet Our Team</h2>
     <div class="row">
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card">
@@ -111,7 +169,7 @@
                 <div class="card-body">
                     <h5 class="card-title">CHUN Phallamonunhh</h5>
                     <h6 class="card-subtitle">Project Manager</h6>
-                    <p class="card-text">CHUN oversees project management, ensuring timelines, resources, and communications are effectively coordinated to meet our ambitious goals.</p>
+                    <p class="card-text">CHUN oversees project management, ensuring timelines, resources, and communications are effectively coordinated to meet our ambitious goals. With a background in software engineering and a passion for cybersecurity, CHUN is committed to leading the team to success.</p>
                 </div>
             </div>
         </div>
@@ -121,7 +179,7 @@
                 <div class="card-body">
                     <h5 class="card-title">HENG Bunkheang</h5>
                     <h6 class="card-subtitle">Machine Learning Specialist</h6>
-                    <p class="card-text">Specializing in AI, HENG develops sophisticated models to accurately detect phishing emails, enhancing our system's effectiveness.</p>
+                    <p class="card-text">Specializing in AI, HENG develops sophisticated models to accurately detect phishing emails, enhancing our system's effectiveness. HENG has extensive experience in machine learning and data science, which plays a crucial role in the success of our detection algorithms.</p>
                 </div>
             </div>
         </div>
@@ -131,7 +189,7 @@
                 <div class="card-body">
                     <h5 class="card-title">HEANG Tong & HENG Shito</h5>
                     <h6 class="card-subtitle">Integration Specialists</h6>
-                    <p class="card-text">This dynamic duo works seamlessly to integrate AI models with our systems and develops robust APIs to support scalability and security.</p>
+                    <p class="card-text">This dynamic duo works seamlessly to integrate AI models with our systems and develops robust APIs to support scalability and security. With backgrounds in software development and systems integration, they ensure our solutions are both powerful and user-friendly.</p>
                 </div>
             </div>
         </div>
@@ -141,14 +199,30 @@
                 <div class="card-body">
                     <h5 class="card-title">Pich KhauongPunroth</h5>
                     <h6 class="card-subtitle">Security Analyst</h6>
-                    <p class="card-text">Pich excels in conducting rigorous real-world testing and is pivotal in acquiring datasets for sample phishing emails, bolstering our model's training and accuracy.</p>
+                    <p class="card-text">Pich excels in conducting rigorous real-world testing and is pivotal in acquiring datasets for sample phishing emails, bolstering our model's training and accuracy. Pich's expertise in cybersecurity and ethical hacking is invaluable to the project.</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Mission & Vision Section -->
     <div class="mission-vision-section">
         <h2>Our Mission & Vision</h2>
         <p>Our mission is to protect individuals and organizations from the ever-growing threat of phishing attacks through advanced machine learning techniques and real-time threat analysis. We envision a world where email communication is safe, secure, and free from malicious actors, empowering users to interact with confidence and peace of mind.</p>
+    </div>
+
+    <!-- Project Details Section -->
+    <div class="project-details">
+        <h3>About the Phishing Detector Project</h3>
+        <p>The Phishing Detector project was born out of a desire to safeguard digital communications. With the increasing sophistication of phishing attacks, traditional methods of email protection are no longer sufficient. Our project leverages machine learning and natural language processing (NLP) to provide a comprehensive solution to this growing problem.</p>
+        <p>Key features of our project include:</p>
+        <ul>
+            <li><strong>Advanced Machine Learning Models:</strong> Our models are trained on large datasets of phishing emails, enabling them to detect subtle patterns that may indicate a phishing attempt.</li>
+            <li><strong>Real-Time Threat Analysis:</strong> The system analyzes emails in real time, providing instant feedback on the likelihood of a phishing attempt.</li>
+            <li><strong>Seamless Integration:</strong> Our solution is designed to integrate easily with existing email systems, providing protection without disrupting workflow.</li>
+            <li><strong>User Education:</strong> In addition to detecting threats, our system educates users about phishing, helping them recognize and avoid future attacks.</li>
+        </ul>
+        <p>The project is continuously evolving, with regular updates to our models and the integration of new features. Our team is committed to staying ahead of emerging threats and ensuring our users are protected in an ever-changing digital landscape.</p>
     </div>
 </div>
 {% endblock %}

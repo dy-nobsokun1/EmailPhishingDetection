@@ -7,6 +7,42 @@
     <title>Email Detail</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        /* Base styles */
+        body {
+            background-color: #f4f5f7;
+            color: #343a40;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        h3, h4 {
+            color: #343a40;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        /* Header styles */
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-header h3 {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
         .phishing-probability {
             font-size: 1.25rem;
             font-weight: bold;
@@ -18,74 +54,105 @@
             margin-top: 10px;
         }
 
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .card-header h3 {
-            color: #343a40;
-            margin-bottom: 10px;
-        }
-
+        /* Body styles */
         .card-body {
+            padding: 20px;
             line-height: 1.6;
             font-size: 1rem;
-            color: #343a40;
         }
 
+        .card-body h4 {
+            margin-top: 20px;
+        }
+
+        /* Button styles */
         .btn-secondary {
             background-color: #343a40;
             border: none;
+            transition: background-color 0.3s ease;
         }
 
         .btn-secondary:hover {
             background-color: #23272b;
         }
 
-        .container {
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
         .btn-info {
-            margin-left: 10px;
+            background-color: #17a2b8;
+            border: none;
+            transition: background-color 0.3s ease;
         }
 
-        #ip-details {
-            margin-top: 20px;
-            display: none;
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
         }
 
         .btn-map {
             margin-top: 20px;
+            background-color: #6c757d;
+            border: none;
+            transition: background-color 0.3s ease;
         }
 
-        #link-list {
-            margin-top: 10px;
+        .btn-map:hover {
+            background-color: #5a6268;
         }
 
+        /* Table styles */
+        .table {
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            border-top: none;
+        }
+
+        .table th {
+            width: 30%;
+            color: #6c757d;
+        }
+
+        .table td {
+            color: #343a40;
+        }
+
+        /* Result styles */
         .vt-result {
             margin-left: 10px;
             font-style: italic;
-            color: #555;
+            transition: color 0.3s ease;
         }
 
-        .suspicious-reasons {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #dc3545;
+        /* Tooltip */
+        .tooltip-inner {
+            background-color: #343a40 !important;
+            color: #ffffff !important;
+            font-size: 0.9rem;
+        }
+
+        .btn-map {
+            color: white;
+        }
+
+        .btn-secondary {
+            margin-top: 20px;
+            align-items: center;
         }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between">
-            <a href="javascript:history.back()" class="btn btn-secondary mb-3">Back to Emails</a>
-        </div>
+    <div class="container">
         <div class="card">
             <div class="card-header">
                 <h3>{{ email.subject }}</h3>
@@ -122,7 +189,7 @@
                         <tr><th>Security Threat Level</th><td id="detail-threat"></td></tr>
                     </table>
                     <!-- Button to show location on Google Maps -->
-                    <button id="show-map" class="btn btn-secondary" style="display:none;" onclick="openMap()">Show on Map</button>
+                    <button id="show-map" class="btn btn-map">Show on Map</button>
                 </div>
 
                 <h4>Attachments:</h4>
@@ -158,18 +225,36 @@
                     <p>No links found in the email body.</p>
                     {% endif %}
                 </div>
+
+                <!-- Recommendations Section -->
+                <h4>Recommendations:</h4>
+                <div class="recommendations-section">
+                    <ul>
+                        {% if email.recommendations %}
+                            {% for recommendation in email.recommendations %}
+                            <li>{{ recommendation }}</li>
+                            {% endfor %}
+                        {% else %}
+                            <p>No specific recommendations available.</p>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
+        </div>
+        <div>
+            <a href="javascript:history.back()" class="btn btn-secondary">Back to Emails</a>
         </div>
     </div>
 
     <script>
         document.getElementById('show-ip-details').addEventListener('click', function() {
             const ip = "{{ email.ip_address }}";
+            let recommendations = [];
 
-            // Fetch and display IP details
             fetch(`/api/ip-details/${ip}`)
                 .then(response => response.json())
                 .then(data => {
+                    // Existing code to display IP details
                     document.getElementById('detail-ip').textContent = data.ip || 'N/A';
                     document.getElementById('detail-type').textContent = data.type || 'N/A';
                     document.getElementById('detail-continent').textContent = data.continent_name || 'N/A';
@@ -181,90 +266,108 @@
                     document.getElementById('detail-longitude').textContent = data.longitude || 'N/A';
                     document.getElementById('detail-isp').textContent = data.isp || 'N/A';
 
-                    // Display threat level with categorization
-                    const threatLevel = data.threat_level !== undefined ? data.threat_level : null;
                     let threatCategory = 'N/A';
-                    if (threatLevel !== null) {
-                        if (threatLevel <= 40) {
-                            threatCategory = `Safe (${threatLevel}%)`;
-                        } else if (threatLevel <= 70) {
-                            threatCategory = `Suspicious (${threatLevel}%)`;
+                    if (data.threat_level !== null && data.threat_level !== undefined) {
+                        if (data.threat_level <= 40) {
+                            threatCategory = `Safe (${data.threat_level}%)`;
+                            recommendations.push("The IP address appears to be safe. You can continue interacting with this email, but remain cautious.");
+                        } else if (data.threat_level <= 70) {
+                            threatCategory = `Suspicious (${data.threat_level}%)`;
+                            recommendations.push("The IP address is suspicious. Consider verifying the sender or reaching out through other channels before interacting.");
                         } else {
-                            threatCategory = `Dangerous (${threatLevel}%)`;
+                            threatCategory = `Dangerous (${data.threat_level}%)`;
+                            recommendations.push("The IP address is highly dangerous. Do not interact with this email and consider reporting it to your IT department.");
                         }
                     }
                     document.getElementById('detail-threat').textContent = threatCategory;
 
-                    document.getElementById('ip-details').style.display = 'block';
-
-                    // Show the "Show on Map" button if latitude and longitude are available
-                    if (data.latitude && data.longitude) {
-                        window.latitude = data.latitude;
-                        window.longitude = data.longitude;
-                        document.getElementById('show-map').style.display = 'inline-block';
-                    }
-
-                    // Display if IP is blacklisted
                     if (data.is_blacklisted) {
                         document.getElementById('ip-status').innerHTML = `<p style="color: red;"><strong>Warning:</strong> This IP is blacklisted in the following DNSBL(s): ${data.blacklisted_in.join(', ')}</p>`;
+                        recommendations.push("This IP address is blacklisted, which is a strong indicator of malicious intent. Avoid interacting with this email.");
                     } else {
                         document.getElementById('ip-status').innerHTML = `<p><strong>Status:</strong> This IP is not blacklisted.</p>`;
                     }
+
+                    document.getElementById('ip-details').style.display = 'block';
+
+                    // Inject recommendations into the Recommendations section
+                    updateRecommendations(recommendations);
                 })
                 .catch(error => console.error('Error fetching IP details:', error));
         });
 
         document.getElementById('analyze-all-links').addEventListener('click', function() {
-        const links = {{ email.links|tojson }};
-        const linkList = document.getElementById('link-list');
+            const links = {{ email.links|tojson }};
+            const linkList = document.getElementById('link-list');
+            let recommendations = [];
 
-        links.forEach((link, index) => {
-            // Analyze the link
-            fetch(`/api/scan-link`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url: link.url }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                let resultText = '';
-                let color = '';
+            links.forEach((link, index) => {
+                fetch(`/api/scan-link`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: link.url }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let resultText = '';
+                    let color = '';
 
-                if (data.error) {
-                    resultText = `Error: ${data.error}`;
-                    color = 'gray';  // Neutral color for errors
-                } else {
-                    // Determine if the link is safe, suspicious, or malicious
-                    if (data.malicious > 0) {
-                        resultText = "Malicious: Avoid clicking this link.";
-                        color = 'red';  // Red for malicious links
-                    } else if (data.suspicious > 0) {
-                        resultText = "Suspicious: Be cautious with this link.";
-                        color = 'orange';  // Orange for suspicious links
-                    } else if (data.harmless > 0) {
-                        resultText = "Safe: No issues detected.";
-                        color = 'green';  // Green for safe links
+                    if (data.error) {
+                        resultText = `Error: ${data.error}`;
+                        color = 'gray';
+                        recommendations.push(`Link ${index + 1} could not be analyzed due to an error. It is recommended not to click on this link.`);
                     } else {
-                        resultText = "No data available.";
-                        color = 'gray';  // Neutral color for no data
+                        if (data.malicious > 0) {
+                            resultText = "Malicious: Avoid clicking this link.";
+                            color = 'red';
+                            recommendations.push(`Link ${index + 1} has been identified as malicious. Do not click this link and consider deleting this email.`);
+                        } else if (data.suspicious > 0) {
+                            resultText = "Suspicious: Be cautious with this link.";
+                            color = 'orange';
+                            recommendations.push(`Link ${index + 1} is suspicious. Avoid clicking unless you can verify its safety through other means.`);
+                        } else if (data.harmless > 0) {
+                            resultText = "Safe: No issues detected.";
+                            color = 'green';
+                            recommendations.push(`Link ${index + 1} appears to be safe, but always be cautious when clicking links in emails.`);
+                        } else {
+                            resultText = "No data available.";
+                            color = 'gray';
+                            recommendations.push(`Link ${index + 1} has no available safety data. It's recommended to avoid clicking this link.`);
+                        }
                     }
-                }
-                
-                // Update the result text in the UI with the appropriate color
-                const resultElement = document.getElementById(`result-${index}`);
-                resultElement.textContent = resultText;
-                resultElement.style.color = color;  // Set the color based on the result
-            })
-            .catch(error => {
-                const resultElement = document.getElementById(`result-${index}`);
-                resultElement.textContent = "Error detecting link";
-                resultElement.style.color = 'gray';  // Neutral color for errors
-                console.error('Error detecting link:', error);
+
+                    const resultElement = document.getElementById(`result-${index}`);
+                    resultElement.textContent = resultText;
+                    resultElement.style.color = color;
+
+                    // Inject recommendations into the Recommendations section
+                    updateRecommendations(recommendations);
+                })
+                .catch(error => {
+                    const resultElement = document.getElementById(`result-${index}`);
+                    resultElement.textContent = "Error detecting link";
+                    resultElement.style.color = 'gray';
+                    console.error('Error detecting link:', error);
+                });
             });
         });
-    });
+
+        function updateRecommendations(recommendations) {
+            const recommendationsContainer = document.querySelector('.card-body .recommendations-section ul');
+            
+            if (recommendations.length > 0) {
+                recommendationsContainer.innerHTML = '';
+                recommendations.forEach(rec => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = rec;
+                    recommendationsContainer.appendChild(listItem);
+                });
+            } else {
+                recommendationsContainer.innerHTML = '<p>No specific recommendations available.</p>';
+            }
+        }
 
         function openMap() {
             if (window.latitude && window.longitude) {

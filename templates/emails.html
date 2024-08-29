@@ -5,35 +5,46 @@
 {% block content %}
 <style>
     body {
-        background-color: #f4f7fa;
+        background-color: #eef2f7;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #343a40;
     }
 
     h1 {
-        color: #343a40;
+        color: #222831;
         margin-bottom: 30px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 2rem;
     }
 
     .email-item {
+        position: relative;
         border: 1px solid #ddd;
         border-radius: 8px;
         margin-bottom: 20px;
         padding: 20px;
-        transition: box-shadow 0.3s ease;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
         background-color: #fff;
         text-decoration: none;
+        overflow: hidden;
     }
+
     .email-item:hover {
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
         text-decoration: none;
     }
 
     .email-item h5 {
-        color: #343a40;
+        color: #222831;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
     }
 
     .email-item p {
         color: #555;
+        font-size: 0.95rem;
     }
 
     .email-item:last-child {
@@ -48,27 +59,26 @@
 
     .classification {
         margin-top: 10px;
-        color: #343a40;
-        border: 1px solid;
+        padding: 10px;
+        color: #fff;
+        font-weight: bold;
         border-radius: 4px;
+        position: relative;
+        overflow: hidden;
     }
 
-    .btn-secondary {
-        background-color: #343a40;
-        border: none;
+    .classification span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.1;
     }
 
-    .btn-secondary:hover {
-        background-color: #23272b;
-    }
-
-    .btn-info {
-        background-color: #007bff;
-        border: none;
-    }
-
-    .btn-info:hover {
-        background-color: #0056b3;
+    .classification strong {
+        z-index: 1;
+        position: relative;
     }
 
     .badge {
@@ -80,24 +90,73 @@
     .badge-info {
         background-color: #17a2b8;
     }
+
+    .btn-secondary {
+        background-color: #343a40;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #23272b;
+        transform: translateY(-3px);
+    }
+
+    .btn-info {
+        background-color: #007bff;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-info:hover {
+        background-color: #0056b3;
+        transform: translateY(-3px);
+    }
+
+    #load-more {
+        display: block;
+        margin: 0 auto;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+    }
+
+    .phishing-probability-bar {
+        width: 5px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        background-color: #dc3545;
+    }
+
+    /* Color adjustments for different phishing probabilities */
+    .phishing-probability-bar.safe {
+        background-color: #28a745;
+    }
+
+    .phishing-probability-bar.warning {
+        background-color: #ffc107;
+    }
+
+    .phishing-probability-bar.danger {
+        background-color: #dc3545;
+    }
 </style>
+
 <div class="container mt-5">
-    <h1 class="text-center">Fetched Emails</h1>
-    <a href="/" class="btn btn-secondary mb-3">Go Back</a>
+    <h1 class="text-center">Detected Emails</h1>
     <div id="email-list" class="list-group">
         {% for email in emails %}
         <a href="/email/{{ email.id }}?username={{ username }}&app_password={{ app_password }}&imap_server={{ imap_server }}" class="list-group-item email-item p-0">
-            <span style="position:absolute; width: 25px; height: 100%; background-color: {% if email.phishing_probability <= 40 %}green{% elif email.phishing_probability <= 60 %}yellow{% else %}red{% endif %};"></span>
+            <span class="phishing-probability-bar {% if email.phishing_probability <= 40 %}safe{% elif email.phishing_probability <= 60 %}warning{% else %}danger{% endif %}"></span>
             <div class="row m-3" style="padding-left: 20px;">
                 <div class="col-md-8">
                     <h5 class="mb-1">{{ email.subject }}</h5>
                     <p class="mb-1"><strong>From:</strong> {{ email.from }}</p>
                     <p class="mb-1"><strong>Snippet:</strong> {{ email.snippet }}</p>
-                    <!-- <button class="btn btn-info mt-2" onclick="event.preventDefault(); toggleClassification({{ loop.index0 }});">
-                        Show Classification
-                    </button> -->
-                    <div id="classification-{{ loop.index0 }}" class="classification" style=" border-color: {% if email.phishing_probability <= 40 %}#c3e6cb{% elif email.phishing_probability <= 60 %}#ffeeba{% else %}#f5c6cb{% endif %};">
-                        <span class="position-absolute" style="width: {{email.phishing_probability}}%; background-color: {% if email.phishing_probability <= 40 %}green{% elif email.phishing_probability <= 60 %}yellow{% else %}red{% endif %}; opacity: 25%; z-index: 0;">.</span>
+                    <div id="classification-{{ loop.index0 }}" class="classification" style="background-color: {% if email.phishing_probability <= 40 %}#28a745{% elif email.phishing_probability <= 60 %}#ffc107{% else %}#dc3545{% endif %};">
+                        <span style="width: {{email.phishing_probability}}%; background-color: {% if email.phishing_probability <= 40 %}#28a745{% elif email.phishing_probability <= 60 %}#ffc107{% else %}#dc3545{% endif %};"></span>
                         <strong class="m-2">Phishing Probability:</strong> {{ email.phishing_probability }}%
                     </div>
                 </div>
@@ -110,6 +169,7 @@
     </div>
     <button id="load-more" class="btn btn-info mt-3">Load More Emails</button>
 </div>
+
 <script>
    document.getElementById('load-more').addEventListener('click', function() {
     var currentCount = document.querySelectorAll('.email-item').length;
@@ -147,12 +207,5 @@
     })
     .catch(error => console.error('Error loading more emails:', error));
 });
-
-
-
-    // function toggleClassification(index) {
-    //     var element = document.getElementById('classification-' + index);
-    //     element.style.display = element.style.display === 'none' ? 'block' : 'none';
-    // }
 </script>
 {% endblock %}

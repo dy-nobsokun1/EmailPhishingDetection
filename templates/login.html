@@ -11,12 +11,16 @@
             background-color: black;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #343a40;
+            height: 1500px;
         }
 
         /* Container styling */
         .container {
             box-shadow: 0 8px 16px 16px gray;
             background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
         }
 
         /* Form input styling */
@@ -82,11 +86,37 @@
                 transform: translateY(0);
             }
         }
+
+        /* Guidance Section */
+        .guide-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            color: #343a40;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 16px 16px gray;
+        }
+
+        .guide-section h4 {
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            color: #0d6efd;
+        }
+
+        .guide-section ul {
+            margin-bottom: 15px;
+        }
+
+        .guide-section ul li {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="d-flex align-items-center justify-content-center min-vh-100 overflow-hidden">
-        <div class="container h-75 m-0 bg-light p-4 border border-1 border-opacity-50 rounded fade-in" style="width: 40%; min-width: 400px; max-width: 500px;">
+    <div class="d-flex align-items-center justify-content-center min-vh-100 flex-column">
+        <!-- Login Box -->
+        <div class="container h-75 mb-4 bg-light p-4 border border-1 border-opacity-50 rounded fade-in" style="width: 40%; min-width: 400px; max-width: 500px;">
             <h1 class="text-center">Email Phishing Detector</h1>
             <div class="d-flex-column align-items-center justify-content-center p-3">
                 <form action="/fetch-emails" method="post">
@@ -101,7 +131,7 @@
                         </div>
                     </div>
                     <div class="form-group mb-4">
-                        <label for="imap_server">Email Service</label>
+                        <label for="imap_server">Email Service "Click on the mail server that you like"</label>
                         <ul class="d-flex justify-content-around p-0 m-0 list-unstyled">
                             <!-- Gmail -->
                             <li class="list-group-item p-1 email-container" style="width: 20%;">
@@ -124,6 +154,25 @@
                     </div>
                 </form>
             </div>
+        </div>
+
+        <!-- Guidance Section -->
+        <div class="container guide-section">
+            <h4>How to Generate App Passwords</h4>
+            <p><strong>For Gmail Users:</strong></p>
+            <ul>
+                <li>1. Go to your Google Account and select "Security".</li>
+                <li>2. Under "Signing in to Google," select "App Passwords".</li>
+                <li>3. You may need to sign in again. Choose "Mail" as the app, and "Windows Computer" as the device.</li>
+                <li>4. Google will generate a 16-character app password. Copy it.</li>
+            </ul>
+            <p><strong>For Outlook Users:</strong></p>
+            <ul>
+                <li>1. Go to your Microsoft Account and select "Security".</li>
+                <li>2. Under "Advanced security options," find "App passwords" and click on "Create a new app password".</li>
+                <li>3. Microsoft will generate a new app password. Copy it.</li>
+            </ul>
+            <p>Use this app password in the "App Password" field above instead of your regular email password.</p>
         </div>
     </div>
 </body>

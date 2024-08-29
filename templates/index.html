@@ -281,6 +281,13 @@
             text-decoration: underline;
         }
 
+        .acs-edu {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #aaaaaa;
+            text-align: center;
+        }
+
         /* Responsive Design */
         @media (max-width: 767px) {
             .hero-section {
@@ -343,7 +350,7 @@
         <div class="container" style="z-index: 1;">
             <h1>Email Phishing Detection System</h1>
             <p>Protect your inbox from phishing attacks with our advanced detection system using machine learning and NLP techniques.</p>
-            <a href="#start" class="btn btn-light btn-lg">Get Started</a>
+            <a href="{{ url_for('info_page') }}" class="btn btn-light btn-lg">Get Started</a>
         </div>
     </section>
 
@@ -390,7 +397,6 @@
                 <li><strong style="color: #ff00bb;">Real-Time Updates:</strong> Our detection models are continuously updated with the latest threat intelligence to ensure maximum protection.</li>
             </ul>
         </div>
-        <img src="../static/homepage_how_it_works.jpg" />
     </section>
 
     <!-- Security Section -->
@@ -404,23 +410,18 @@
         </div>
     </section>
 
-    <!-- Call to Action Section -->
-    <section class="cta-section text-center">
-        <div class="container">
-            <h2>Start Protecting Your Inbox Today</h2>
-            <p>Join thousands of users who trust our phishing detection system to keep their email communication secure.</p>
-            <a href="#start" class="btn btn-primary btn-lg">Get Started</a>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="footer text-center">
         <div class="container">
             <p>&copy; 2024 Phishing Detector. All rights reserved.</p>
             <p>
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms of Service</a>
+                <a href="{{ url_for('privacy') }}">Privacy Policy</a> | 
+                <a href="{{ url_for('term') }}">Terms of Service</a>
             </p>
+            <div class="acs-edu">
+                This project is a part of the ACS EDU Program.
+            </div>
         </div>
     </footer>
 

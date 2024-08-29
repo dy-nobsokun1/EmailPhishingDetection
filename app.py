@@ -41,6 +41,7 @@ explainer = shap.KernelExplainer(model.named_steps['multinomialnb'].predict_prob
 VIRUSTOTAL_API_KEY = os.getenv('VIRUSTOTAL_API_KEY')
 api_key = os.getenv('API_KEY_1')
 API_KEY = os.getenv('API_KEY_2')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 def decode_subject(subject):
     decoded_bytes, encoding = decode_header(subject)[0]
     if isinstance(decoded_bytes, bytes):
@@ -434,7 +435,10 @@ def fetch_email_by_id(username, app_password, imap_server, email_id, mailbox='IN
                 # Get phishing probability and highlight areas
                 phishing_proba, classification = classify_email(email_content['body'])
                 email_content['phishing_probability'] = phishing_proba
+                email_content['classification'] = classification
+
                 email_content['body'] = Markup(highlight_phishing_areas(email_content['body']))
+                email_content['recommendations'] = generate_detailed_recommendations(email_content)
 
         mail.close()
         mail.logout()
@@ -536,9 +540,20 @@ def contact():
 def about():
     return render_template('about_us.html')
 
+@app.route('/info')
+def info_page():
+    return render_template('info_page.html')
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/term')
+def term():
+    return render_template('term_condition.html')
+
 @app.route('/api/ip-threat/<ip_address>')
 def api_ip_threat(ip_address):
-    # Check the security threat level of the IP address
     threat_info = check_ip_threat_level(ip_address)
     return jsonify(threat_info)
 
